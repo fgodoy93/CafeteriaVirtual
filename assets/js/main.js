@@ -9,7 +9,7 @@ const prepararCafe = () => {
         setTimeout(() => {
             const exito = Math.random() > 0.2
             if (exito) {
-                console.log(`☕ El café está listo en ${tiempoCafe / 1000} segundos`)
+                console.log(`El café está listo en ${tiempoCafe / 1000} segundos`)
                 resolve("Café")
             } else {
                 reject("Se acabó el café")
@@ -23,7 +23,7 @@ const tostarPan = () => {
         setTimeout(() => {
             const exito = Math.random() > 0.2
             if (exito) {
-                console.log(`🍞 Pan tostado listo en ${tiempoPan / 1000} segundos`)
+                console.log(`Pan tostado listo en ${tiempoPan / 1000} segundos`)
                 resolve("Pan")
             } else {
                 reject("Se acabó el pan")
@@ -37,7 +37,7 @@ const exprimirJugo = () => {
         setTimeout(() => {
             const exito = Math.random() > 0.2
             if (exito) {
-                console.log(`🧃 Jugo listo en ${tiempoJugo / 1000} segundos`)
+                console.log(`Jugo listo en ${tiempoJugo / 1000} segundos`)
                 resolve("Jugo")
             } else {
                 reject("No queda fruta para el jugo")
@@ -46,18 +46,21 @@ const exprimirJugo = () => {
     })
 }
 
+let pedidoListo = []
+
 // 3. Realizar pedido con seguimiento de éxito
 const realizarPedido = () => {
-    console.log("🛎️ Realizando pedido...")
+    console.log("Realizando pedido...")
 
-    let pedidoListo = []
+
+    
 
     prepararCafe()
         .then((resultado) => {
             pedidoListo.push(resultado)
         })
         .catch((error) => {
-            console.log(`❌ Error con el café: ${error}`)
+            console.log(`Error con el café: ${error}`)
         })
         .then(() => {
             return tostarPan()
@@ -65,7 +68,7 @@ const realizarPedido = () => {
                     pedidoListo.push(resultado)
                 })
                 .catch((error) => {
-                    console.log(`❌ Error con el pan: ${error}`)
+                    console.log(`Error con el pan: ${error}`)
                 })
         })
         .then(() => {
@@ -74,16 +77,58 @@ const realizarPedido = () => {
                     pedidoListo.push(resultado)
                 })
                 .catch((error) => {
-                    console.log(`❌ Error con el jugo: ${error}`)
+                    console.log(`Error con el jugo: ${error}`)
                 })
         })
         .then(() => {
             if (pedidoListo.length > 0) {
-                console.log(`✅ Pedido listo con: ${pedidoListo.join(", ")}`)
+                console.log(`Pedido listo con: ${pedidoListo.join(", ")}`)
             } else {
-                console.log("🚫 No se pudo preparar nada del pedido")
+                console.log("No se pudo preparar nada del pedido")
             }
+        })
+        .then(() => {
+            resumenPedido()
         })
 }
 
+const realizarPedidoAsync = async () => {
+
+    try {
+        const cafe =  await prepararCafe()
+        pedidoListo.push(cafe)
+        console.log(`Pedido café async listo `)
+    } catch (error) {
+        console.log("No se pudo hacer el cafe", error)
+    }
+
+    try {
+        const pan =  await tostarPan()
+        pedidoListo.push(pan)
+        console.log(`Pedido pan async listo `)
+    } catch (error) {
+        console.log("No se pudo hacer el pan", error)
+    }
+
+    try {
+        const jugo =  await exprimirJugo()
+        pedidoListo.push(jugo)
+        console.log(`Pedido jugo async listo `)
+    } catch (error) {
+        console.log("No se pudo hacer el jugo", error)
+    }
+    resumenPedido()
+}
+
+
+const resumenPedido = () => {
+    if (pedidoListo.length > 0) {
+        console.log(`Pedido listo con: ${pedidoListo.join(", ")}`)
+    } else {
+        console.log("No se pudo preparar nada del pedido")
+    }
+}
+
 realizarPedido()
+realizarPedidoAsync()
+
